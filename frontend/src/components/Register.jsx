@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 
-const Register = () => {
+export const Register = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
@@ -140,4 +140,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+

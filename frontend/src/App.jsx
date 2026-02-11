@@ -3,8 +3,9 @@ import React from 'react'
 import { Routes,Route } from 'react-router-dom'
 
 import Dashboard from './components/Dashboard'
-import Register from './components/register'
-import Login from './components/Login'
+
+import { Register } from './components/register'
+import { Login } from './components/Login'
 
 
 const App = () => {

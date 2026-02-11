@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 
 /* ---------- Login Component ---------- */
-const Login = () => {
+export const Login = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -101,4 +101,3 @@ const Login = () => {
   );
 };
 
-export default Login;
