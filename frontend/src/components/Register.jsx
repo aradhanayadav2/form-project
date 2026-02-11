@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 
-export const Register = () => {
+export const Registers = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
