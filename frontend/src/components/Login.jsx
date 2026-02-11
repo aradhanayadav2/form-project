@@ -1,152 +1,102 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-/* ---------- Stepper Component ---------- */
-const Stepper = ({ currentStep }) => {
-  const steps = ["User Info", "Security"];
-
-  return (
-    <div className="flex items-center justify-between mb-4">
-      {steps.map((step, index) => (
-        <div key={index} className="flex-1 flex items-center">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
-              ${
-                index <= currentStep
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-600"
-              }`}
-          >
-            {index + 1}
-          </div>
-          {index !== steps.length - 1 && (
-            <div
-              className={`flex-1 h-1 mx-2 ${
-                index < currentStep ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 /* ---------- Login Component ---------- */
 const Login = () => {
-  const [step, setStep] = useState(0);
+  const navigate = useNavigate();
 
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [address, setAddress] = useState();
-  const [phone, setPhone] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    
     try {
+      setLoading(true);
+      setError("");
+      
+      console.log("Submitting login with:", { email, password }); // Debug log
+      
       const payload = {
-        name,
         email,
         password,
-        address,
-        phone,
       };
 
-      console.log("payload==>",payload)
+      // const response = await axios.post(
+      //   "http://localhost:5000/api/v1/users/login/customer",
+      //   payload
+      // );
 
-      const create = await axios.post(
-        "http://localhost:5000/api/v1/users/create",
-        payload
-      );
+      console.log("Login successful:", response.data); // Debug log
+      
+      // Store token if your API returns one
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
 
-      console.log(create);
+      navigate("/dashboard");
     } catch (error) {
-      console.log(error);
+      console.error("Login failed:", error);
+      setError(error.response?.data?.message || "Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-sky-200 space-y-4 p-5 rounded-md shadow-md m-10 w-64">
-      <p className="font-semibold text-lg text-center">Login Page</p>
-
-      {/* Stepper */}
-      <Stepper currentStep={step} />
-
-      {/* STEP 1 */}
-      {step === 0 && (
-        <>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form onSubmit={handleSubmit}>
+        <div className="bg-sky-200 space-y-4 p-10 rounded-md shadow-md w-80">
+          <p className="font-semibold text-lg text-center mb-6">Login Page</p>
+          
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm">
+              {error}
+            </div>
+          )}
+          
           <div>
-            <p>Name</p>
-            <input
-              onChange={(e) => setName(e.target.value)}
-              type="text"
-              className="border rounded-md shadow-md w-full"
-            />
-          </div>
-
-          <div>
-            <p>Email</p>
-            <input
+            <label className="block mb-2 font-medium">Email</label>
+            <input 
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
-              className="border rounded-md shadow-md w-full"
+              className="border rounded-md shadow-md w-full px-3 py-2"
+              required
+              minLength={5}
+              maxLength={100}
+              placeholder="Enter your email"
             />
           </div>
+
           <div>
-            <p>Password</p>
-            <input
+            <label className="block mb-2 font-medium">Password</label>
+            <input 
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              className="border rounded-md shadow-md w-full"
+              className="border rounded-md shadow-md w-full px-3 py-2"
+              required
+              minLength={8}
+              maxLength={50}
+              placeholder="Enter your password"
             />
-          </div> 
-
-          <button
-            onClick={() => setStep(1)}
-            className="bg-blue-600 px-4 py-1 rounded-md shadow-md text-white w-full"
-          >
-            Next
-          </button>
-        </>
-      )}
-
-      {/* STEP 2 */}
-      {step === 1 && (
-        <>
-          <div>
-            <p>Address</p>
-            <input
-              onChange={(e) => setAddress(e.target.value)}
-              type="text"
-              className="border rounded-md shadow-md w-full"
-            />
-          </div> 
-           <div>
-            <p>Phone</p>
-            <input
-              onChange={(e) => setPhone(e.target.value)}
-              type="text"
-              className="border rounded-md shadow-md w-full"
-            />
-          </div> 
-
-          <div className="flex justify-between gap-2">
-            <button
-              onClick={() => setStep(0)}
-              className="bg-gray-400 px-4 py-1 rounded-md shadow-md text-white w-full"
-            >
-              Back
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              className="bg-blue-600 px-4 py-1 rounded-md shadow-md text-white w-full"
-            >
-              Login
-            </button>
           </div>
-        </>
-      )}
+
+         <Link to="/dashboard"
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 px-4 py-2 rounded-md shadow-md text-white w-full hover:bg-blue-700 transition mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </Link>
+        </div>
+      </form>
     </div>
   );
 };
