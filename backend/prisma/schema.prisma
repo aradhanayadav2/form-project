@@ -17,7 +17,6 @@ model User {
   email     String   @unique 
   password  String
   address   String
-  phone     String    @unique
   createdAt DateTime @default(now())
   profile   profile?
 }

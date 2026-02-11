@@ -1,4 +1,4 @@
-import {  createUserService, getUserService } from "../service/UserService.js";
+import {  createUserService, getUserService, loginUserService } from "../service/UserService.js";
 
 
 export const getUsersService = (req, res) => {
@@ -43,11 +43,11 @@ export const getUser =async(req, res) => {
 
 export const createUserController =async (req, res) => {
   try {
-    const { name, email,password,address, phone } = req.body;
+    const { name, email,password,address } = req.body;
     console.log("body =", req.body)
 
     // Validation
-    if (!name || !email ||!password ||!address ||!phone) {
+    if (!name || !email ||!password ||!address ) {
       return res.status(400).json({
         success: false,
         error: 'Please provide name and email'
@@ -60,7 +60,6 @@ export const createUserController =async (req, res) => {
       email,
       password,
       address,
-      phone
     };
 
     console.log("newUser==",newUser)
@@ -69,6 +68,37 @@ export const createUserController =async (req, res) => {
     res.status(201).json({
       success: true,
       data: created
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+export const loginUserController =async (req, res) => {
+  try {
+    const { email,password } = req.body;
+
+    // Validation
+    if (!email ||!password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide name and email'
+      });
+    }
+
+    
+    const data = {
+      email,
+      password,
+    };
+
+   const user= await loginUserService(data);
+
+    res.status(201).json({
+      success: true,
+      data: user
     });
   } catch (error) {
     res.status(500).json({
@@ -89,14 +119,12 @@ export const updateUser = (req, res) => {
       });
     }
 
-    const { name, email,password,address,phone } = req.body;
+    const {  email,password } = req.body;
 
     // Update user
-    user.name = name || user.name;
     user.email = email || user.email;
     user.password = password || user.password;
-    user.address = address|| user.address;
-    user.phone = phone || user.phone;
+  
 
     res.status(200).json({
       success: true,

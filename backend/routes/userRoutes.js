@@ -5,7 +5,8 @@ import {
   updateUser,
   deleteUser,
   getUsersService,
-  createUserController
+  createUserController,
+  loginUserController
 } from '../controllers/UserController.js';
 
 
@@ -21,6 +22,7 @@ const router = express.Router();
 router.get('/get', getUser);
 router.get('/get:id', getUsersService);
 router.post('/create', createUserController);
+router.post('/login/customer', loginUserController);
 router.put('/update:id', updateUser);
 router.delete('/delete', deleteUser);
 
